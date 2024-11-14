@@ -1,0 +1,50 @@
+name: CI/CD Pipeline with Selenium and Shell Scripting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # 2. Setup Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      # 3. Install Python dependencies
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Include selenium and other dependencies
+
+      # 4. Run Shell script commands (if any)
+      - name: Run Shell Script
+        run: |
+          # Sample shell script commands
+          echo "Running setup commands..."
+          chmod +x scripts/setup.sh
+          ./scripts/setup.sh  # Run setup shell script
+          
+      # 5. Run Selenium tests
+      - name: Run Selenium Tests
+        run: |
+          python -m unittest discover -s tests  # Assumes tests are in "tests" directory
+
+      # 6. Deploy (if applicable)
+      - name: Deployment Step (Optional)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "Deploying application..."
+          ./scripts/deploy.sh  # Run your custom deployment shell script
