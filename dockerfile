@@ -23,7 +23,7 @@ RUN CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_
 ENV CHROME_BIN=/usr/bin/google-chrome \
     CHROME_DRIVER=/usr/local/bin/chromedriver
 
-
+# Set working directory
 WORKDIR /app
 
 # Copy Python dependencies and install them
@@ -33,9 +33,7 @@ RUN pip install -r requirements.txt
 # Copy the test code
 COPY . /app
 
-# List the contents of /app/tests for debugging purposes
-RUN ls -R /app/tests
-
 # Run the test suite using unittest when the container starts
-CMD ["python", "-m", "unittest", "discover", "-s", "tests", "-p", "*.py"]
+CMD ["python", "-m", "unittest", "discover", "-s", "."]
+
 
