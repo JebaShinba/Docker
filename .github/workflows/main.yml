@@ -35,7 +35,7 @@ jobs:
           docker-compose -f docker-compose.yml up -d
 
           # Run Selenium tests using docker exec or a testing framework
-          docker exec -t my-container-name python -m unittest discover -s tests/  # Example: Running Python tests inside the container
+          docker exec -t my-container-name python -m unittest discover -s tests/test_example.py  # Example: Running Python tests inside the container
 
           # Optionally, wait for tests to finish, or log the output
           docker logs my-container-name  # This shows logs to check test results
