@@ -1,6 +1,5 @@
 import unittest
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
@@ -14,7 +13,7 @@ class ExampleSeleniumTest(unittest.TestCase):
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--disable-gpu")
         
-        # Initialize WebDriver with options
+        # Initialize WebDriver with the correct ChromeDriver version
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
         self.driver.get("https://example.com")
 
@@ -35,5 +34,3 @@ class ExampleSeleniumTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-
