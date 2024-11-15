@@ -18,17 +18,15 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}  # Use the Personal Access Token (PAT) here
-
-      - name: Build and Push Docker image
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check Docker version
+        run: docker --version
+      - name: Build Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: ghcr.io/jebashinba/my-image:latest   # Ensure repository name is all lowercase
-
-      - name: Check Docker version
-        run: docker --version
+          tags: ghcr.io/jebashinba/my-image:latest   # Adjust repository name as needed
 
       - name: Run tests in Docker container
         run: |
