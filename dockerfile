@@ -13,13 +13,12 @@ RUN curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dea
     apt-get install -y google-chrome-stable && \
     rm -rf /var/lib/apt/lists/*
 
+# Install ChromeDriver
+RUN CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
+    curl -sSL "https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip" -o chromedriver.zip && \
+    unzip chromedriver.zip -d /usr/local/bin/ && \
+    rm chromedriver.zip
 
-# Download the specific ChromeDriver version
-RUN wget https://chromedriver.storage.googleapis.com/131.0.6778.69/chromedriver_linux64.zip && \
-    unzip chromedriver_linux64.zip && \
-    mv chromedriver /usr/local/bin/chromedriver && \
-    chmod +x /usr/local/bin/chromedriver && \
-    rm chromedriver_linux64.zip
 # Set environment variables for Chrome and ChromeDriver
 ENV CHROME_BIN=/usr/bin/google-chrome \
     CHROME_DRIVER=/usr/local/bin/chromedriver
@@ -27,14 +26,14 @@ ENV CHROME_BIN=/usr/bin/google-chrome \
 # Set working directory
 WORKDIR /app
 
-
-# Install Python dependencies
-COPY requirements.txt .
+# Copy Python dependencies and install them
+COPY requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
 
-# Copy the app
+# Copy the test code
 COPY . /app
-WORKDIR /app
 
-# Default command
+# Run the test suite using unittest when the container starts
 CMD ["python", "-m", "unittest", "discover", "-s", "."]
+
+
