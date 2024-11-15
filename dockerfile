@@ -1,16 +1,17 @@
 # Use an official Python runtime as the base image
 FROM python:3.9-slim
 
-# Install required packages for Selenium and Chrome
+# Install required packages for Selenium, Chrome, and ChromeDriver
 RUN apt-get update && \
-    apt-get install -y unzip curl && \
-    apt-get install -y libnss3 libgconf-2-4 && \
+    apt-get install -y curl gnupg unzip libnss3 libgconf-2-4 && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Chrome browser
-RUN curl -sSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o chrome.deb && \
-    apt-get install -y ./chrome.deb && \
-    rm chrome.deb
+# Add the Google Chrome APT repository and install Chrome
+RUN curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-linux-keyring.gpg && \
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get update && \
+    apt-get install -y google-chrome-stable && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install ChromeDriver
 RUN CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
@@ -34,3 +35,4 @@ COPY . /app
 
 # Run the test suite using unittest when the container starts
 CMD ["python", "-m", "unittest", "discover", "-s", "."]
+
