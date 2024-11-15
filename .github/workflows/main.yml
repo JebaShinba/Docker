@@ -26,7 +26,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/jebashinba/my-image:latest   # Adjust repository name as needed
+          tags: ghcr.io/jebashinba/my-image:latest   
 
       - name: Run tests in Docker container
         run: |
