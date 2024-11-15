@@ -62,7 +62,7 @@ class GoogleSearchTest(unittest.TestCase):
             print(f"Title: {title}, Link: {link}")
 
     def test_search_navigation(self):
-        # Verify navigation to the second page of search results
+        
         self.driver.get("https://www.google.com")
         search_box = self.driver.find_element(By.NAME, "q")
         search_query = "Selenium WebDriver"
