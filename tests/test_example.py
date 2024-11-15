@@ -1,55 +1,39 @@
+import unittest
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-import time
+from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
 
-# Set up Chrome options
-chrome_options = Options()
-chrome_options.add_argument("--headless")  # Run in headless mode
-chrome_options.add_argument("--no-sandbox")  # Bypass OS security model
-chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
-chrome_options.add_argument("--disable-gpu")  # Applicable to Windows environments
-chrome_options.add_argument("--window-size=1280x1024")  # Set a specific window size
+class GoogleSearchTest(unittest.TestCase):
+    def setUp(self):
+        # Setup Chrome WebDriver with headless mode enabled
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--disable-gpu")
+        
+        # Initialize WebDriver with the correct ChromeDriver version
+        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+        self.driver.get("https://www.google.com")
 
-# Initialize the Chrome WebDriver with these options
-driver = webdriver.Chrome(options=chrome_options)
+    def test_google_title(self):
+        # Verifying that the page title contains "Google"
+        self.assertIn("Google", self.driver.title)
 
-# Function to open a page
-def open_page(url):
-    driver.get(url)
-    print(f"Opened page: {url}")
+    def test_google_search(self):
+        # Search for a term and verify results
+        search_box = self.driver.find_element(By.NAME, "q")
+        search_box.send_keys("OpenAI")
+        search_box.submit()
 
-# Function to perform a Google search
-def search_in_google(query):
-    search_box = driver.find_element(By.NAME, "q")
-    search_box.send_keys(query + Keys.RETURN)
-    print(f"Searching for: {query}")
-    time.sleep(2)
+        # Check if results page loaded with "OpenAI" term in title
+        self.assertIn("OpenAI", self.driver.title)
 
-# Function to extract search results
-def extract_search_results():
-    results = driver.find_elements(By.CSS_SELECTOR, 'h3')
-    for result in results:
-        title = result.text
-        link = result.find_element(By.XPATH, '..').get_attribute('href')
-        print(f"Title: {title}, Link: {link}")
+    def tearDown(self):
+        # Quit the WebDriver instance
+        self.driver.quit()
 
-# Function to take a screenshot
-def take_screenshot(file_name):
-    driver.save_screenshot(file_name)
-    print(f"Screenshot saved as: {file_name}")
-
-# Function to close the browser
-def close_browser():
-    driver.quit()
-    print("Browser closed.")
-
-# Example 
 if __name__ == "__main__":
-    open_page("https://www.google.com")
-    search_in_google("Selenium WebDriver")
-    extract_search_results()
-    take_screenshot("screenshot.png")
-    close_browser()
+    unittest.main()

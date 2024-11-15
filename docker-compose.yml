@@ -1,0 +1,27 @@
+version: '3'
+services:
+  selenium:
+    image: selenium/standalone-chrome:latest
+    ports:
+      - "4444:4444"
+    environment:
+      - SCREEN_WIDTH=1920
+      - SCREEN_HEIGHT=1080
+    shm_size: 2g  # Required for running Selenium tests in Docker
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_ENV=production
+    depends_on:
+      - selenium  # Ensure Selenium is up before the app starts
+
+  tests:
+    image: my-image  # Docker image for running tests
+    build:
+      context: ./tests  # Assuming your test code is in ./tests folder
+    depends_on:
+      - app  # Ensure app is up before tests run
+    entrypoint: ["python", "-m", "unittest", "discover", "-s", "tests"]
