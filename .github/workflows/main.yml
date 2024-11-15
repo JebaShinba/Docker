@@ -1,4 +1,4 @@
-name: Build and Push Docker Image to GHCR
+name: Build, Test, and Push Docker Image
 
 on:
   push:
@@ -20,10 +20,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push Docker image
+      - name: Build Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: ghcr.io/jebashinba/my-image:latest   # Changed to lowercase
+          tags: ghcr.io/jebashinba/my-image:latest   # Adjust repository name as needed
 
+      - name: Run tests in Docker container
+        run: |
+          docker run --rm ghcr.io/jebashinba/my-image:latest
