@@ -34,5 +34,5 @@ RUN pip install -r requirements.txt
 COPY . /app
 
 # Run the test suite using unittest when the container starts
-CMD ["python", "-m", "unittest", "discover", "-s", "tests/test_example.py"]
+CMD ["python", "-m", "unittest", "discover", "-s", "."]
 
