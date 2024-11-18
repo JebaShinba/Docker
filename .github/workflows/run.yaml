@@ -45,38 +45,21 @@ jobs:
 
       
 
-      # Step 10: Multi-Platform Docker Builds
-      - name: Multi-platform Docker build
-        uses: docker/setup-buildx-action@v2
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-docker-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
       - name: Build and push multi-platform Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
           platforms: linux/amd64,linux/arm64
           tags: |
             ghcr.io/jebashinba/my-image:latest
             ghcr.io/jebashinba/my-image:${{ github.sha }}
-
-      # Step 11: Scan Docker image for vulnerabilities
-      - name: Scan Docker image
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ghcr.io/jebashinba/my-image:latest
-
-      # Step 12: Deploy to Staging
-      - name: Deploy to Staging
-        if: github.ref == 'refs/heads/main' && success()
-        run: |
-          echo "Deploying to staging environment"
-          # Add deployment scripts here
-
-      # Step 13: Notify on Failure
-      - name: Notify on failure
-        if: failure()
-        uses: slackapi/slack-github-action@v1.24
-        with:
-          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
-          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          text: |
-            "Workflow failed for commit ${{ github.sha }} on branch ${{ github.ref_name }}."
