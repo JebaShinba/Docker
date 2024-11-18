@@ -28,18 +28,22 @@ jobs:
           push: true
           tags: ghcr.io/jebashinba/my-image:latest   
 
-      - name: Run tests in Docker container
+      - name: Checkout repository
+        uses: actions/checkout@v3
+    
+        # Set up Python (since we're using Python for Selenium)
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+            python-version: 3.9  # Specify your Python version
+    
+        # Install dependencies from requirements.txt
+      - name: Install dependencies
         run: |
-          docker run --rm ghcr.io/jebashinba/my-image:latest
-          # Start Docker container using the image built with Docker Compose
-          docker-compose -f docker-compose.yml up -d
-
-          # Run Selenium tests using docker exec or a testing framework
-          docker exec -t my-container-name python -m unittest discover -s tests/test_example.py  # Example: Running Python tests inside the container
-
-          # Optionally, wait for tests to finish, or log the output
-          docker logs my-container-name  # This shows logs to check test results
-
-          # Shut down Docker containers after the tests are done
-          docker-compose -f docker-compose.yml down
-
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+    
+        # Run the Selenium tests via the shell script
+      - name: Run Selenium tests
+        run: |
+            bash ./run.sh  # Make sure the script is executable
