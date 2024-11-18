@@ -26,7 +26,7 @@ jobs:
       - name: Check Docker version
         run: docker --version
 
-      # Step 4: Build Docker image
+      # Build Docker image
       - name: Build Docker image
         uses: docker/build-push-action@v3
         with:
