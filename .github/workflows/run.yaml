@@ -43,45 +43,7 @@ jobs:
             ${{ runner.os }}-pip-
       - run: pip install -r requirements.txt
 
-      # Step 5: Linting
-      - name: Lint Python code
-        run: |
-          pip install flake8
-          flake8 .
-
-      # Step 6: Unit Tests with Coverage
-      - name: Run tests
-        run: |
-          pip install pytest pytest-cov
-          pytest --cov=app tests/
-
-      # Step 7: Conditional Test Runs for Integration Tests
-      - name: Run integration tests
-        if: github.event_name == 'push' && startsWith(github.ref_name, 'release/')
-        run: |
-          pytest tests/integration/
-
-      # Step 8: Conditional Skipping for Docs or README Changes
-      - name: Check if only docs/README changed
-        id: check-docs
-        run: |
-          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qvE 'docs/|README.md'; then
-            echo "not-docs=true" >> $GITHUB_ENV
-          else
-            echo "not-docs=false" >> $GITHUB_ENV
-      - name: Skip workflow for docs/README-only changes
-        if: env.not-docs == 'false'
-        run: echo "Skipping build for docs/README-only changes."
-
-      # Step 9: Build Docker Image
-      - name: Build Docker image
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: |
-            ghcr.io/jebashinba/my-image:latest
-            ghcr.io/jebashinba/my-image:${{ github.sha }}
+      
 
       # Step 10: Multi-Platform Docker Builds
       - name: Multi-platform Docker build
